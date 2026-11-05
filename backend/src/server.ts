@@ -15,6 +15,10 @@ import aiRoutes from './routes/aiRoutes';
 const app = express();
 const server = http.createServer(app);
 
+// Keep-alive timeouts aligned with Cloudflare and Render reverse proxies
+server.keepAliveTimeout = 65000;
+server.headersTimeout = 66000;
+
 // Socket.io for live exam monitoring
 const io = new SocketIOServer(server, {
   cors: {
