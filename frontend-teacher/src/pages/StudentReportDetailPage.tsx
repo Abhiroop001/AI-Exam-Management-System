@@ -10,7 +10,8 @@ import {
   HiOutlineXCircle,
   HiOutlineExclamationTriangle,
   HiOutlineLightBulb,
-  HiOutlineShieldCheck
+  HiOutlineShieldCheck,
+  HiOutlinePrinter
 } from 'react-icons/hi2';
 
 export const StudentReportDetailPage: React.FC = () => {
@@ -41,18 +42,18 @@ export const StudentReportDetailPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="w-full max-w-[1700px] mx-auto px-4 py-16 text-center">
-        <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-sm font-semibold text-slate-600">Loading AI diagnostic report...</p>
+      <div className="w-full max-w-[1700px] mx-auto px-4 py-20 text-center">
+        <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-base font-bold text-slate-700">Loading student diagnostic report...</p>
       </div>
     );
   }
 
   if (!submission || !exam) {
     return (
-      <div className="w-full max-w-[1700px] mx-auto px-4 py-16 text-center">
-        <p className="text-slate-600 font-semibold mb-3">Report not found.</p>
-        <Link to="/" className="text-purple-600 underline text-sm font-semibold inline-block">
+      <div className="w-full max-w-[1700px] mx-auto px-4 py-20 text-center">
+        <p className="text-slate-700 font-bold text-lg mb-4">Report not found.</p>
+        <Link to="/" className="text-purple-600 underline text-base font-bold inline-block">
           Return to Dashboard
         </Link>
       </div>
@@ -62,113 +63,124 @@ export const StudentReportDetailPage: React.FC = () => {
   const teacherReport = submission.teacherReport;
 
   return (
-    <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 py-8 space-y-8 font-sans">
+    <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 py-10 space-y-10 font-sans">
       {/* Top Bar */}
       <div className="flex items-center justify-between">
         <Link
           to={`/exam/${exam._id}/submissions`}
-          className="inline-flex items-center space-x-2 text-sm font-semibold text-slate-600 hover:text-purple-600 bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm transition-colors"
+          className="inline-flex items-center space-x-2 text-base font-bold text-slate-700 hover:text-purple-600 bg-white px-5 py-2.5 rounded-xl border border-slate-200 shadow-sm transition-colors"
         >
-          <HiOutlineArrowLeft className="w-4 h-4" />
+          <HiOutlineArrowLeft className="w-5 h-5" />
           <span>Back to Submissions</span>
         </Link>
 
-        <span className="text-xs px-3.5 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-bold flex items-center space-x-1.5 shadow-sm">
-          <HiOutlineSparkles className="w-4 h-4 text-purple-600" />
-          <span>Teacher Diagnostic Report</span>
-        </span>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => window.print()}
+            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-sm font-bold shadow-sm transition-colors"
+          >
+            <HiOutlinePrinter className="w-4 h-4 text-purple-600" />
+            <span>Print Student File</span>
+          </button>
+
+          <span className="text-xs px-4 py-2 rounded-xl bg-purple-50 text-purple-700 border border-purple-200 font-black flex items-center space-x-2 shadow-sm">
+            <HiOutlineSparkles className="w-4 h-4 text-purple-600" />
+            <span>Educator Diagnostic Dossier</span>
+          </span>
+        </div>
       </div>
 
       {/* Student & Performance Summary Card - Expansive Full Width */}
-      <div className="glass-panel p-6 sm:p-10 rounded-3xl border border-slate-200/90 shadow-sm bg-white/95 relative overflow-hidden">
+      <div className="glass-panel p-8 sm:p-12 rounded-3xl border border-slate-200/90 shadow-sm bg-white/95 relative overflow-hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-          <div className="space-y-3 flex-1">
+          <div className="space-y-4 flex-1">
             <div className="flex items-center space-x-4 mb-2">
-              <div className="w-14 h-14 rounded-2xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-700 shadow-sm">
-                <HiOutlineAcademicCap className="w-8 h-8" />
+              <div className="w-16 h-16 rounded-2xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-700 shadow-sm">
+                <HiOutlineAcademicCap className="w-9 h-9" />
               </div>
               <div>
-                <h1 className="text-3xl sm:text-4xl font-black text-slate-900">{student?.name || 'Student'}</h1>
-                <p className="text-sm text-slate-500 font-medium mt-0.5">
-                  Class: <span className="text-slate-800 font-bold">{student?.className || 'N/A'}</span> &bull; Email:{' '}
-                  <span className="text-slate-800 font-bold">{student?.email}</span> &bull; Age:{' '}
-                  <span className="text-slate-800 font-bold">{student?.age}</span>
+                <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">{student?.name || 'Student'}</h1>
+                <p className="text-base text-slate-600 font-medium mt-1">
+                  Class: <span className="text-slate-900 font-bold">{student?.className || 'N/A'}</span> &bull; Email:{' '}
+                  <span className="text-slate-900 font-bold">{student?.email}</span> &bull; Age:{' '}
+                  <span className="text-slate-900 font-bold">{student?.age}</span>
                 </p>
               </div>
             </div>
-            <p className="text-sm text-slate-600 font-medium">
-              Exam: <span className="text-slate-900 font-bold">{exam.title}</span> ({exam.subject})
+            <p className="text-base text-slate-600 font-medium">
+              Assessment: <span className="text-slate-900 font-bold">{exam.title}</span> &bull; Discipline:{' '}
+              <span className="text-slate-900 font-bold">{exam.subject}</span>
             </p>
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="glass-card p-6 rounded-3xl border border-slate-200 text-center min-w-[150px] bg-slate-50 shadow-sm">
-              <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Score</span>
-              <span className="text-4xl font-black text-slate-900 font-mono">
+            <div className="glass-card p-7 rounded-3xl border border-slate-200 text-center min-w-[170px] bg-slate-50 shadow-sm">
+              <span className="text-xs text-slate-500 uppercase font-black tracking-wider block">Total Score</span>
+              <span className="text-5xl font-black text-slate-900 font-mono mt-1 block">
                 {submission.totalScore}/{submission.maxScore}
               </span>
-              <span className="text-xs text-purple-700 font-bold block mt-1">
-                {submission.percentage}% Total
+              <span className="text-xs text-purple-700 font-black block mt-2">
+                {submission.percentage}% Accuracy
               </span>
             </div>
 
-            <div className="glass-card p-6 rounded-3xl border border-purple-200 text-center min-w-[150px] bg-purple-50/40 shadow-sm">
-              <span className="text-[10px] text-purple-600 uppercase font-bold tracking-wider block">Mastery Rating</span>
-              <span className="text-2xl font-black text-purple-900 font-mono">
+            <div className="glass-card p-7 rounded-3xl border border-purple-200 text-center min-w-[170px] bg-purple-50/40 shadow-sm">
+              <span className="text-xs text-purple-700 uppercase font-black tracking-wider block">Mastery Rating</span>
+              <span className="text-3xl font-black text-purple-900 font-mono mt-1 block">
                 {teacherReport?.studentMasteryRating || 'In Review'}
               </span>
-              <span className="text-[11px] text-emerald-700 flex items-center justify-center space-x-1 mt-1 font-bold">
+              <span className="text-xs text-emerald-700 flex items-center justify-center space-x-1 mt-2 font-bold">
                 <HiOutlineShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>{teacherReport?.integrityConfidenceScore || 98}% Trust</span>
+                <span>{teacherReport?.integrityConfidenceScore || 98}% Integrity Confidence</span>
               </span>
             </div>
           </div>
         </div>
 
-        {/* AI Synthesis Summary */}
+        {/* Pedagogical Synthesis Summary */}
         {teacherReport?.overallSummary && (
-          <div className="mt-8 p-6 rounded-2xl bg-purple-50/60 border border-purple-100">
-            <span className="text-xs font-bold uppercase tracking-wider text-purple-800 flex items-center space-x-1.5 mb-2">
+          <div className="mt-8 p-7 rounded-2xl bg-purple-50/60 border border-purple-100">
+            <span className="text-xs font-black uppercase tracking-wider text-purple-800 flex items-center space-x-2 mb-3">
               <HiOutlineSparkles className="w-4 h-4 text-purple-600" />
-              <span>AI Pedagogical Assessment & Classroom Diagnostic</span>
+              <span>Pedagogical Assessment & Classroom Diagnostic</span>
             </span>
-            <p className="text-base text-slate-800 leading-relaxed font-sans font-medium">
+            <p className="text-lg text-slate-900 leading-relaxed font-sans font-medium">
               {teacherReport.overallSummary}
             </p>
           </div>
         )}
       </div>
 
-      {/* AI Diagnostic Breakdown: Strengths vs Misconceptions */}
+      {/* Cognitive Diagnostic Breakdown: Strengths vs Misconceptions */}
       {teacherReport && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Strengths Observed */}
-          <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-emerald-200 bg-white/95 shadow-sm">
-            <h3 className="text-sm font-bold text-emerald-800 uppercase tracking-wider flex items-center space-x-2 mb-4">
-              <HiOutlineCheckCircle className="w-5 h-5 text-emerald-600" />
+          <div className="glass-panel p-8 sm:p-10 rounded-3xl border border-emerald-200 bg-white/95 shadow-sm">
+            <h3 className="text-base font-black text-emerald-800 uppercase tracking-wider flex items-center space-x-2.5 mb-5">
+              <HiOutlineCheckCircle className="w-6 h-6 text-emerald-600" />
               <span>Demonstrated Cognitive Strengths</span>
             </h3>
-            <ul className="space-y-3 text-sm text-slate-700">
+            <ul className="space-y-3.5 text-base text-slate-800">
               {(teacherReport.strengthsObserved || []).map((s, idx) => (
-                <li key={idx} className="flex items-start space-x-3 bg-emerald-50/60 p-3.5 rounded-2xl border border-emerald-100">
-                  <span className="w-2 h-2 rounded-full bg-emerald-600 mt-2 shrink-0" />
-                  <span className="font-medium">{s}</span>
+                <li key={idx} className="flex items-start space-x-3.5 bg-emerald-50/60 p-4 rounded-2xl border border-emerald-100">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 mt-2 shrink-0" />
+                  <span className="font-semibold">{s}</span>
                 </li>
               ))}
             </ul>
           </div>
 
           {/* Misconceptions Identified */}
-          <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-amber-200 bg-white/95 shadow-sm">
-            <h3 className="text-sm font-bold text-amber-800 uppercase tracking-wider flex items-center space-x-2 mb-4">
-              <HiOutlineExclamationTriangle className="w-5 h-5 text-amber-600" />
+          <div className="glass-panel p-8 sm:p-10 rounded-3xl border border-amber-200 bg-white/95 shadow-sm">
+            <h3 className="text-base font-black text-amber-800 uppercase tracking-wider flex items-center space-x-2.5 mb-5">
+              <HiOutlineExclamationTriangle className="w-6 h-6 text-amber-600" />
               <span>Identified Gaps & Misconceptions</span>
             </h3>
-            <ul className="space-y-3 text-sm text-slate-700">
+            <ul className="space-y-3.5 text-base text-slate-800">
               {(teacherReport.misconceptionsIdentified || []).map((m, idx) => (
-                <li key={idx} className="flex items-start space-x-3 bg-amber-50/60 p-3.5 rounded-2xl border border-amber-100">
-                  <span className="w-2 h-2 rounded-full bg-amber-600 mt-2 shrink-0" />
-                  <span className="font-medium">{m}</span>
+                <li key={idx} className="flex items-start space-x-3.5 bg-amber-50/60 p-4 rounded-2xl border border-amber-100">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-600 mt-2 shrink-0" />
+                  <span className="font-semibold">{m}</span>
                 </li>
               ))}
             </ul>
@@ -178,28 +190,28 @@ export const StudentReportDetailPage: React.FC = () => {
 
       {/* Teacher Action Items */}
       {teacherReport?.teacherActionItems && teacherReport.teacherActionItems.length > 0 && (
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-indigo-200 bg-white/95 shadow-sm space-y-4">
-          <div className="flex items-center space-x-2">
-            <div className="p-2 rounded-xl bg-indigo-100 text-indigo-700">
-              <HiOutlineLightBulb className="w-5 h-5" />
+        <div className="glass-panel p-8 sm:p-10 rounded-3xl border border-indigo-200 bg-white/95 shadow-sm space-y-6">
+          <div className="flex items-center space-x-3">
+            <div className="p-2.5 rounded-2xl bg-indigo-100 text-indigo-700">
+              <HiOutlineLightBulb className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-900 uppercase tracking-wider">
+              <h3 className="text-lg font-black text-slate-900 uppercase tracking-wider">
                 Recommended Pedagogical Interventions
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs sm:text-sm text-slate-500 font-medium">
                 Actionable steps for targeted 1-on-1 coaching and homework differentiation
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
             {teacherReport.teacherActionItems.map((action, idx) => (
-              <div key={idx} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-800 hover:border-indigo-300 transition-colors">
-                <span className="text-xs font-mono font-bold text-indigo-700 uppercase tracking-wider block mb-1.5">
+              <div key={idx} className="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-base text-slate-800 hover:border-indigo-300 transition-colors">
+                <span className="text-xs font-mono font-black text-indigo-700 uppercase tracking-wider block mb-2">
                   Intervention #{idx + 1}
                 </span>
-                <p className="leading-relaxed font-medium">{action}</p>
+                <p className="leading-relaxed font-semibold">{action}</p>
               </div>
             ))}
           </div>
@@ -207,12 +219,15 @@ export const StudentReportDetailPage: React.FC = () => {
       )}
 
       {/* Question-by-Question Deep Inspection */}
-      <div className="space-y-5">
-        <h2 className="text-xl font-bold text-slate-900 flex items-center space-x-2">
+      <div className="space-y-6">
+        <h2 className="text-2xl font-black text-slate-900 flex items-center space-x-3">
           <span>Question-by-Question Audit & Teacher Remarks</span>
+          <span className="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-bold border border-slate-200">
+            {exam.questions.length} Items
+          </span>
         </h2>
 
-        <div className="space-y-5">
+        <div className="space-y-6">
           {exam.questions.map((q, idx) => {
             const studentAns = submission.answers.find((a) => a.questionId === q.id);
             const score = studentAns ? studentAns.scoreAwarded : 0;
@@ -221,52 +236,58 @@ export const StudentReportDetailPage: React.FC = () => {
             return (
               <div
                 key={q.id}
-                className={`glass-panel p-6 sm:p-8 rounded-3xl border bg-white shadow-sm ${
+                className={`glass-panel p-8 sm:p-10 rounded-3xl border bg-white shadow-sm ${
                   isFullScore ? 'border-slate-200' : 'border-rose-200'
                 }`}
               >
                 {/* Header */}
-                <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
-                  <div className="flex items-center space-x-3">
-                    <span className="font-mono text-xs font-bold px-3 py-1 rounded-xl bg-purple-50 text-purple-700 border border-purple-200">
+                <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-5">
+                  <div className="flex items-center space-x-3.5">
+                    <span className="font-mono text-xs font-black px-3.5 py-1.5 rounded-xl bg-purple-50 text-purple-700 border border-purple-200">
                       Q#{idx + 1}
                     </span>
-                    <span className="text-xs text-slate-500 font-bold uppercase tracking-wider">
+                    <span className="text-xs text-slate-500 font-extrabold uppercase tracking-wider">
                       {q.type.replace('_', ' ')}
                     </span>
                   </div>
 
                   <div className="flex items-center space-x-3">
-                    <span className="text-sm font-mono font-extrabold text-slate-900">
+                    <span className="text-base font-mono font-black text-slate-900">
                       Score: {score} / {q.marks} Marks
                     </span>
                     {isFullScore ? (
-                      <HiOutlineCheckCircle className="w-5 h-5 text-emerald-600" />
+                      <span className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
+                        <HiOutlineCheckCircle className="w-4 h-4 text-emerald-600" />
+                        <span>Full Marks</span>
+                      </span>
                     ) : (
-                      <HiOutlineXCircle className="w-5 h-5 text-rose-600" />
+                      <span className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold">
+                        <HiOutlineXCircle className="w-4 h-4 text-rose-600" />
+                        <span>Partial / Review</span>
+                      </span>
                     )}
                   </div>
                 </div>
 
                 {/* Prompt */}
-                <p className="text-base font-bold text-slate-900 mb-5 leading-relaxed">
+                <p className="text-xl sm:text-2xl font-black text-slate-900 mb-6 leading-relaxed">
                   {q.questionText}
                 </p>
 
                 {/* Answers Comparison */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 text-sm mb-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 text-base mb-5">
                   {/* Student Submission */}
-                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-                    <span className="text-xs text-slate-500 uppercase font-bold tracking-wider block mb-1.5">
+                  <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+                    <span className="text-xs text-slate-500 uppercase font-black tracking-wider block mb-2">
                       Student's Submitted Answer
                     </span>
                     <div className="text-slate-900 font-medium">
                       {q.type === 'long_answer' ? (
-                        <p className="whitespace-pre-wrap leading-relaxed">
+                        <p className="whitespace-pre-wrap leading-relaxed text-base">
                           {studentAns?.textAnswer || '<No answer recorded>'}
                         </p>
                       ) : (
-                        <p className="font-mono text-indigo-700 font-bold">
+                        <p className="font-mono text-indigo-700 font-bold text-base">
                           {studentAns?.selectedOptions?.join(', ') || '<No option selected>'}
                         </p>
                       )}
@@ -274,38 +295,38 @@ export const StudentReportDetailPage: React.FC = () => {
                   </div>
 
                   {/* Teacher's Reference & Remarks */}
-                  <div className="p-4 rounded-2xl bg-purple-50/50 border border-purple-100">
-                    <span className="text-xs text-purple-700 uppercase font-bold tracking-wider block mb-1.5">
-                      Teacher's Reference / Model Answer
+                  <div className="p-5 rounded-2xl bg-purple-50/50 border border-purple-100">
+                    <span className="text-xs text-purple-700 uppercase font-black tracking-wider block mb-2">
+                      Instructor's Model Key / Solution
                     </span>
                     <div className="text-slate-800">
                       {q.type === 'long_answer' ? (
-                        <p className="whitespace-pre-wrap leading-relaxed text-sm font-medium">
+                        <p className="whitespace-pre-wrap leading-relaxed text-base font-medium">
                           {q.idealAnswer || 'N/A'}
                         </p>
                       ) : (
-                        <p className="font-mono text-emerald-700 font-bold">
+                        <p className="font-mono text-emerald-700 font-bold text-base">
                           {q.correctAnswers?.join(', ')}
                         </p>
                       )}
                     </div>
 
                     {q.remarks && (
-                      <div className="mt-3 pt-3 border-t border-purple-100 text-xs text-purple-800">
-                        <span className="font-bold">Teacher Remark: </span>
+                      <div className="mt-4 pt-3 border-t border-purple-100 text-sm text-purple-900 font-medium">
+                        <span className="font-bold">Evaluation Remark: </span>
                         {q.remarks}
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* AI Evaluation Rationale */}
+                {/* Diagnostic Evaluation Rationale */}
                 {studentAns?.aiEvaluation && (
-                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-700 flex items-start space-x-3">
-                    <HiOutlineSparkles className="w-5 h-5 text-purple-600 shrink-0 mt-0.5" />
+                  <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-base text-slate-800 flex items-start space-x-3.5">
+                    <HiOutlineSparkles className="w-6 h-6 text-purple-600 shrink-0 mt-0.5" />
                     <div>
-                      <span className="font-bold text-slate-900">AI Grading Rationale: </span>
-                      <span>{studentAns.aiEvaluation.scoreRationale || studentAns.aiEvaluation.feedback}</span>
+                      <span className="font-bold text-slate-900">Diagnostic Evaluation Rationale: </span>
+                      <span className="font-medium">{studentAns.aiEvaluation.scoreRationale || studentAns.aiEvaluation.feedback}</span>
                     </div>
                   </div>
                 )}

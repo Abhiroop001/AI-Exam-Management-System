@@ -73,8 +73,8 @@ export interface StudentReport {
 
 export interface Submission {
   _id: string;
-  examId: string;
-  studentId: string;
+  examId: string | Exam | any;
+  studentId: string | StudentUser | any;
   answers: StudentSubmissionAnswer[];
   totalScore: number;
   maxScore: number;

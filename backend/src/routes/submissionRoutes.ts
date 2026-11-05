@@ -3,6 +3,7 @@ import {
   submitExam,
   getSubmissionStatus,
   getStudentReport,
+  getMySubmissions,
   getTeacherExamSubmissions,
   pingLiveSession,
   getLiveExamTakers,
@@ -14,6 +15,7 @@ const router = Router();
 // Student submission & heartbeat
 router.post('/submit', authenticateStudent, submitExam);
 router.post('/heartbeat', authenticateStudent, pingLiveSession);
+router.get('/my-submissions', authenticateStudent, getMySubmissions);
 router.get('/status/:submissionId', authenticateAny, getSubmissionStatus);
 router.get('/report/:submissionId', authenticateAny, getStudentReport);
 router.get('/teacher-report/:submissionId', authenticateTeacher, getStudentReport);

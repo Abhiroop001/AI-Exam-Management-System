@@ -147,6 +147,29 @@ export const getStudentReport = async (req: AuthRequest, res: Response): Promise
   }
 };
 
+export const getMySubmissions = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const studentId = req.user?.id;
+    if (!studentId) {
+      res.status(401).json({ success: false, message: 'Student authentication required.' });
+      return;
+    }
+
+    const submissions = await Submission.find({ studentId })
+      .populate('examId', 'title subject totalMarks durationMinutes code expiresAt')
+      .sort({ submittedAt: -1 })
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      submissions,
+    });
+  } catch (error) {
+    console.error('[Get My Submissions Error]:', error);
+    res.status(500).json({ success: false, message: 'Server error retrieving your submissions.' });
+  }
+};
+
 export const getTeacherExamSubmissions = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { examId } = req.params;
