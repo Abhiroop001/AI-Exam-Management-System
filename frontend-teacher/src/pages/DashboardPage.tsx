@@ -91,7 +91,10 @@ export const DashboardPage: React.FC = () => {
 
   const handleCopyInviteLink = (exam: Exam, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    const studentUrl = `${window.location.protocol}//${window.location.hostname}:5174/exam/${exam.code}`;
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const studentUrl = isLocal
+      ? `${window.location.protocol}//${window.location.hostname}:5174/exam/${exam.code}`
+      : `https://frontend-student-nu.vercel.app/exam/${exam.code}`;
     navigator.clipboard.writeText(studentUrl);
     setCopiedCode(exam.code);
     setTimeout(() => setCopiedCode(null), 3000);

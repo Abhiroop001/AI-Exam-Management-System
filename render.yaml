@@ -27,6 +27,6 @@ services:
       - key: MISTRAL_API_KEY
         sync: false
       - key: CLIENT_TEACHER_URL
-        sync: false
+        value: https://frontend-teacher-five.vercel.app
       - key: CLIENT_STUDENT_URL
-        sync: false
+        value: https://frontend-student-nu.vercel.app
