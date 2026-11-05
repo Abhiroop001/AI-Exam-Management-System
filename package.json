@@ -1,0 +1,21 @@
+{
+  "name": "ai-exam-management-system",
+  "version": "1.0.0",
+  "description": "Full-stack AI-powered Student & Teacher Exam Management Platform with MERN and TypeScript",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && cd backend && npm install && cd ../frontend-teacher && npm install && cd ../frontend-student && npm install",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:teacher": "cd frontend-teacher && npm run dev",
+    "dev:student": "cd frontend-student && npm run dev",
+    "dev": "concurrently -n \"BACKEND,TEACHER,STUDENT\" -c \"blue,magenta,cyan\" \"npm run dev:backend\" \"npm run dev:teacher\" \"npm run dev:student\"",
+    "build:backend": "cd backend && npm run build",
+    "build:teacher": "cd frontend-teacher && npm run build",
+    "build:student": "cd frontend-student && npm run build",
+    "build:all": "npm run build:backend && npm run build:teacher && npm run build:student"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+
