@@ -7,6 +7,7 @@ export interface IAttachment {
   url: string;
   size: number;
   codeLanguage?: string;
+  content?: string;
 }
 
 export interface IQuestion {
@@ -51,6 +52,7 @@ const AttachmentSchema = new Schema<IAttachment>({
   url: { type: String, required: true },
   size: { type: Number, default: 0 },
   codeLanguage: { type: String },
+  content: { type: String },
 });
 
 const QuestionSchema = new Schema<IQuestion>({

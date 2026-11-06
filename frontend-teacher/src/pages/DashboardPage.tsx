@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { api } from '../services/api';
+import { api, SERVER_STATIC_URL } from '../services/api';
 import { Exam, Question } from '../types';
 import { QRModal } from '../components/QRModal';
 import { 
@@ -691,7 +691,7 @@ export const DashboardPage: React.FC = () => {
                             {q.attachments.map((att, aIdx) => (
                               <a
                                 key={aIdx}
-                                href={att.url}
+                                href={`${SERVER_STATIC_URL}${att.url}`}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs text-slate-700 hover:text-purple-600 font-medium shadow-2xs"

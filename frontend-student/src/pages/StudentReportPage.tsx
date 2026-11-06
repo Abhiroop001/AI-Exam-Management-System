@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 import { api } from '../services/api';
 import { Submission, Exam } from '../types';
+import { AttachmentBadge } from '../components/AttachmentBadge';
 import { 
   HiOutlineSparkles, 
   HiOutlineCheckCircle, 
@@ -328,6 +329,11 @@ export const StudentReportPage: React.FC = () => {
                 <p className="text-xl sm:text-2xl font-black text-slate-900 mb-6 leading-relaxed">
                   {q.questionText}
                 </p>
+
+                {/* Attached Exam Materials & Code */}
+                {q.attachments && q.attachments.length > 0 && (
+                  <AttachmentBadge attachments={q.attachments} />
+                )}
 
                 {/* Answers Comparison Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 text-base mb-5">

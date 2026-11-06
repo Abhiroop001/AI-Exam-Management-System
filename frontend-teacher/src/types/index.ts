@@ -15,6 +15,7 @@ export interface Attachment {
   url: string;
   size: number;
   codeLanguage?: string;
+  content?: string;
 }
 
 export interface Question {

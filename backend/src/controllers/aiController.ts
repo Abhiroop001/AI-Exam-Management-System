@@ -5,6 +5,7 @@ import { GroqService } from '../services/groqService';
 import { HuggingFaceService } from '../services/huggingFaceService';
 import { MultiProviderService } from '../services/multiProviderService';
 import { getFileTypeCategory, getCodeLanguage } from '../middleware/upload';
+import { FileAsset } from '../models/FileAsset';
 
 export const polishQuestion = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -41,6 +42,35 @@ export const uploadAttachmentAndAnalyze = async (req: Request, res: Response): P
 
     let visionAnalysis = null;
     let codeAnalysis = null;
+    let textContent = '';
+
+    // Read file buffer for persistence in MongoDB
+    try {
+      const fileBuffer = fs.readFileSync(file.path);
+      const isTextOrCode = fileCategory === 'code' || file.mimetype?.startsWith('text/') || ['.c', '.cpp', '.py', '.java', '.js', '.ts', '.html', '.css', '.json', '.sql', '.csv'].some(e => file.originalname.toLowerCase().endsWith(e));
+      
+      if (isTextOrCode) {
+        textContent = fileBuffer.toString('utf-8');
+      }
+
+      // Persist permanently in MongoDB FileAsset
+      await FileAsset.findOneAndUpdate(
+        { filename: file.filename },
+        {
+          filename: file.filename,
+          originalName: file.originalname,
+          fileType: fileCategory,
+          mimeType: file.mimetype || 'application/octet-stream',
+          size: file.size,
+          codeLanguage,
+          content: textContent || undefined,
+          dataBase64: fileBuffer.toString('base64'),
+        },
+        { upsert: true, new: true }
+      );
+    } catch (saveErr) {
+      console.warn('[FileAsset Persistence Error]:', saveErr);
+    }
 
     // 1. Vision & Super-Resolution with Hugging Face (Qwen2.5-VL + Swin2SR)
     if (fileCategory === 'image') {
@@ -53,7 +83,7 @@ export const uploadAttachmentAndAnalyze = async (req: Request, res: Response): P
     // 2. Code Evaluation with Qwen2.5-Coder-32B-Instruct / MultiProvider
     if (fileCategory === 'code') {
       try {
-        const codeContent = fs.readFileSync(file.path, 'utf-8');
+        const codeContent = textContent || fs.readFileSync(file.path, 'utf-8');
         codeAnalysis = await MultiProviderService.evaluateSourceCode(
           codeContent,
           codeLanguage || 'c',
@@ -73,6 +103,7 @@ export const uploadAttachmentAndAnalyze = async (req: Request, res: Response): P
         url: fileUrl,
         size: file.size,
         codeLanguage,
+        content: textContent || undefined,
       },
       visionAnalysis,
       codeAnalysis,
