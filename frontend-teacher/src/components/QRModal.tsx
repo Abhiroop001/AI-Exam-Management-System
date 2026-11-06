@@ -7,7 +7,8 @@ import {
   HiOutlineQrCode,
   HiOutlineClock,
   HiOutlineArrowDownTray,
-  HiOutlineSparkles
+  HiOutlineSparkles,
+  HiOutlineLink
 } from 'react-icons/hi2';
 
 interface QRModalProps {
@@ -17,6 +18,7 @@ interface QRModalProps {
   examCode: string;
   qrCodeDataUrl: string;
   expiresAt: string;
+  examJoinUrl?: string;
 }
 
 export const QRModal: React.FC<QRModalProps> = ({
@@ -26,15 +28,53 @@ export const QRModal: React.FC<QRModalProps> = ({
   examCode,
   qrCodeDataUrl,
   expiresAt,
+  examJoinUrl,
 }) => {
   const [copied, setCopied] = useState(false);
-  const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-  const studentJoinUrl = isLocal
-    ? `http://localhost:5174/exam/${examCode}`
-    : `https://frontend-student-nu.vercel.app/exam/${examCode}`;
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(studentJoinUrl);
+  // Compute target URL: prioritize explicit examJoinUrl prop, fallback to production Vercel student domain
+  const isLocal = typeof window !== 'undefined' && 
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+    !window.location.hostname.includes('vercel.app');
+
+  const studentJoinUrl = examJoinUrl?.trim() || (
+    isLocal
+      ? `http://localhost:5174/exam/${examCode}`
+      : `https://frontend-student-nu.vercel.app/exam/${examCode}`
+  );
+
+  const handleCopyLink = async () => {
+    let succeeded = false;
+
+    // 1. Try modern clipboard API
+    if (navigator?.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(studentJoinUrl);
+        succeeded = true;
+      } catch (err) {
+        console.warn('Clipboard writeText failed, trying execCommand fallback:', err);
+      }
+    }
+
+    // 2. Fallback for iOS Safari, WebViews, or non-secure contexts
+    if (!succeeded) {
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = studentJoinUrl;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        textArea.remove();
+        succeeded = true;
+      } catch (fallbackErr) {
+        console.error('Fallback clipboard copy failed:', fallbackErr);
+      }
+    }
+
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
@@ -63,7 +103,7 @@ export const QRModal: React.FC<QRModalProps> = ({
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-md glass-panel p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-2xl bg-white text-center overflow-hidden z-10"
+            className="relative w-full max-w-lg glass-panel p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-2xl bg-white text-center overflow-hidden z-10"
           >
             {/* Top gradient accent */}
             <div className="absolute top-0 left-0 right-0 h-1.5 glow-gradient-purple" />
@@ -81,20 +121,20 @@ export const QRModal: React.FC<QRModalProps> = ({
             </div>
 
             <h3 className="text-xl font-bold text-slate-900 mb-1 truncate px-4">{examTitle}</h3>
-            <p className="text-xs text-slate-500 mb-6 font-medium">
+            <p className="text-xs text-slate-500 mb-5 font-medium">
               Students can scan this QR code or input the 6-character code to join the test instantly.
             </p>
 
             {/* QR Code Container with sleek white card for maximum optical readability */}
-            <div className="relative inline-block p-4 bg-white border border-slate-200 rounded-2xl shadow-md mb-5 mx-auto group">
+            <div className="relative inline-block p-4 bg-white border border-slate-200 rounded-2xl shadow-md mb-4 mx-auto group">
               {qrCodeDataUrl ? (
                 <img
                   src={qrCodeDataUrl}
                   alt="Exam QR Code"
-                  className="w-56 h-56 object-contain rounded-lg"
+                  className="w-52 h-52 sm:w-56 sm:h-56 object-contain rounded-lg"
                 />
               ) : (
-                <div className="w-56 h-56 flex flex-col items-center justify-center bg-slate-100 rounded-lg text-slate-400">
+                <div className="w-52 h-52 sm:w-56 sm:h-56 flex flex-col items-center justify-center bg-slate-100 rounded-lg text-slate-400">
                   <HiOutlineQrCode className="w-12 h-12 mb-2" />
                   <span className="text-xs font-medium">Generating QR...</span>
                 </div>
@@ -111,6 +151,35 @@ export const QRModal: React.FC<QRModalProps> = ({
               </div>
             </div>
 
+            {/* Direct Student Examination URL Input Display */}
+            <div className="mb-4 p-3 rounded-2xl bg-slate-50 border border-slate-200 text-left">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[11px] text-slate-500 uppercase tracking-wider font-extrabold flex items-center space-x-1">
+                  <HiOutlineLink className="w-3.5 h-3.5 text-purple-600" />
+                  <span>Student Exam Join Link</span>
+                </span>
+                <span className="text-[10px] text-purple-600 font-bold bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
+                  Ready to Share
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={studentJoinUrl}
+                  onClick={(e) => (e.target as HTMLInputElement).select()}
+                  className="flex-1 bg-white border border-slate-200 px-3 py-2 rounded-xl text-xs font-mono font-bold text-slate-800 select-all focus:outline-none focus:border-purple-400"
+                />
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-colors shrink-0 shadow-sm"
+                >
+                  {copied ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+            </div>
+
             {/* Expiration Banner */}
             <div className="flex items-center justify-center space-x-2 text-xs text-amber-800 font-medium bg-amber-50 py-2 px-3 rounded-xl border border-amber-200 mb-5">
               <HiOutlineClock className="w-4 h-4 text-amber-600 shrink-0" />
@@ -120,6 +189,7 @@ export const QRModal: React.FC<QRModalProps> = ({
             {/* Actions: Copy Link & Download */}
             <div className="flex items-center space-x-3">
               <button
+                type="button"
                 onClick={handleCopyLink}
                 className="flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-xl font-bold text-sm text-white glow-gradient-purple hover:brightness-105 shadow-md shadow-purple-600/25 transition-all"
               >

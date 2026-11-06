@@ -86,12 +86,14 @@ export const CreateExamPage: React.FC = () => {
     code: string;
     qrUrl: string;
     expiresAt: string;
+    examJoinUrl?: string;
   }>({
     isOpen: false,
     title: '',
     code: '',
     qrUrl: '',
     expiresAt: '',
+    examJoinUrl: '',
   });
 
   const handleAddQuestion = (type: 'single_mcq' | 'multi_mcq' | 'long_answer') => {
@@ -249,6 +251,9 @@ export const CreateExamPage: React.FC = () => {
           code: res.data.exam.code,
           qrUrl: res.data.exam.qrCodeDataUrl,
           expiresAt: res.data.exam.expiresAt,
+          examJoinUrl: res.data.examJoinUrl || (
+            isLocal ? `http://localhost:5174/exam/${res.data.exam.code}` : `https://frontend-student-nu.vercel.app/exam/${res.data.exam.code}`
+          ),
         });
       }
     } catch (err: any) {
@@ -647,6 +652,7 @@ export const CreateExamPage: React.FC = () => {
         examCode={createdExamModal.code}
         qrCodeDataUrl={createdExamModal.qrUrl}
         expiresAt={createdExamModal.expiresAt}
+        examJoinUrl={createdExamModal.examJoinUrl}
       />
     </div>
   );

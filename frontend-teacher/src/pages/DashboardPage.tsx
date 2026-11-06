@@ -46,12 +46,14 @@ export const DashboardPage: React.FC = () => {
     code: string;
     qrUrl: string;
     expiresAt: string;
+    examJoinUrl?: string;
   }>({
     isOpen: false,
     title: '',
     code: '',
     qrUrl: '',
     expiresAt: '',
+    examJoinUrl: '',
   });
 
   const fetchExams = async () => {
@@ -91,11 +93,31 @@ export const DashboardPage: React.FC = () => {
 
   const handleCopyInviteLink = (exam: Exam, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const isLocal = typeof window !== 'undefined' && 
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+      !window.location.hostname.includes('vercel.app');
     const studentUrl = isLocal
-      ? `${window.location.protocol}//${window.location.hostname}:5174/exam/${exam.code}`
+      ? `http://localhost:5174/exam/${exam.code}`
       : `https://frontend-student-nu.vercel.app/exam/${exam.code}`;
-    navigator.clipboard.writeText(studentUrl);
+    
+    // Cross-platform copy
+    let copied = false;
+    if (navigator?.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(studentUrl).then(() => { copied = true; }).catch(() => {});
+    }
+    if (!copied) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = studentUrl;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      } catch (_) {}
+    }
     setCopiedCode(exam.code);
     setTimeout(() => setCopiedCode(null), 3000);
   };
@@ -403,12 +425,16 @@ export const DashboardPage: React.FC = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        const isLocalEnv = typeof window !== 'undefined' && 
+                          (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+                          !window.location.hostname.includes('vercel.app');
                         setSelectedQR({
                           isOpen: true,
                           title: exam.title,
                           code: exam.code,
                           qrUrl: exam.qrCodeDataUrl,
                           expiresAt: exam.expiresAt,
+                          examJoinUrl: isLocalEnv ? `http://localhost:5174/exam/${exam.code}` : `https://frontend-student-nu.vercel.app/exam/${exam.code}`,
                         });
                       }}
                       className="p-3 rounded-xl bg-slate-50 hover:bg-purple-50 text-slate-700 hover:text-purple-700 border border-slate-200 transition-colors shadow-sm"
@@ -726,12 +752,16 @@ export const DashboardPage: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                       <button
                         onClick={() => {
+                          const isLocalEnv = typeof window !== 'undefined' && 
+                            (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+                            !window.location.hostname.includes('vercel.app');
                           setSelectedQR({
                             isOpen: true,
                             title: selectedExamForDetail.title,
                             code: selectedExamForDetail.code,
                             qrUrl: selectedExamForDetail.qrCodeDataUrl,
                             expiresAt: selectedExamForDetail.expiresAt,
+                            examJoinUrl: isLocalEnv ? `http://localhost:5174/exam/${selectedExamForDetail.code}` : `https://frontend-student-nu.vercel.app/exam/${selectedExamForDetail.code}`,
                           });
                         }}
                         className="p-5 rounded-2xl bg-white border border-slate-200 hover:border-purple-300 hover:shadow-md transition-all text-center flex flex-col items-center justify-center space-y-2"
@@ -786,6 +816,7 @@ export const DashboardPage: React.FC = () => {
         examCode={selectedQR.code}
         qrCodeDataUrl={selectedQR.qrUrl}
         expiresAt={selectedQR.expiresAt}
+        examJoinUrl={selectedQR.examJoinUrl}
       />
     </div>
   );

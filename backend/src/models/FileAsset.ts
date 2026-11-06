@@ -34,3 +34,4 @@ const FileAssetSchema = new Schema<IFileAsset>(
 );
 
 export const FileAsset = mongoose.model<IFileAsset>('FileAsset', FileAssetSchema);
+
