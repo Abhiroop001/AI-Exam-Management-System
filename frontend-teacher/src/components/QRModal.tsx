@@ -28,7 +28,10 @@ export const QRModal: React.FC<QRModalProps> = ({
   expiresAt,
 }) => {
   const [copied, setCopied] = useState(false);
-  const studentJoinUrl = `http://localhost:5174/exam/${examCode}`;
+  const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  const studentJoinUrl = isLocal
+    ? `http://localhost:5174/exam/${examCode}`
+    : `https://frontend-student-nu.vercel.app/exam/${examCode}`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(studentJoinUrl);

@@ -49,8 +49,19 @@ export const createExam = async (req: AuthRequest, res: Response): Promise<void>
       exists = await Exam.findOne({ code });
     }
 
+    // Infer studentBase from request body, origin, or referer
+    const origin = (req.headers.origin || req.headers.referer || '') as string;
+    let customStudentBase = (req.body.clientStudentUrl as string | undefined)?.trim();
+    if (!customStudentBase) {
+      if (origin.includes('vercel.app') || origin.includes('frontend-teacher')) {
+        customStudentBase = 'https://frontend-student-nu.vercel.app';
+      } else if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+        customStudentBase = 'http://localhost:5174';
+      }
+    }
+
     // Generate QR code
-    const { qrCodeDataUrl, examJoinUrl } = await QRService.generateExamQRCode(code);
+    const { qrCodeDataUrl, examJoinUrl } = await QRService.generateExamQRCode(code, customStudentBase);
 
     // Calculate total marks
     const totalMarks = questions.reduce((sum: number, q: any) => sum + (Number(q.marks) || 1), 0);

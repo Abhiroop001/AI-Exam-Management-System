@@ -227,6 +227,11 @@ export const CreateExamPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
+      const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+      const clientStudentUrl = isLocal
+        ? 'http://localhost:5174'
+        : 'https://frontend-student-nu.vercel.app';
+
       const res = await api.post('/exams', {
         title,
         subject,
@@ -234,6 +239,7 @@ export const CreateExamPage: React.FC = () => {
         durationMinutes,
         expiresAt,
         questions,
+        clientStudentUrl,
       });
 
       if (res.data.success && res.data.exam) {

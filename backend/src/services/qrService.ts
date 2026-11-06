@@ -5,11 +5,29 @@ export class QRService {
   /**
    * Generates a sleek, high-contrast QR code Data URL for the exam
    */
-  static async generateExamQRCode(examCode: string): Promise<{
+  static async generateExamQRCode(
+    examCode: string,
+    customStudentBase?: string
+  ): Promise<{
     qrCodeDataUrl: string;
     examJoinUrl: string;
   }> {
-    const studentBase = config.clientStudentUrl || 'http://localhost:5174';
+    let studentBase = customStudentBase?.trim();
+    if (!studentBase) {
+      if (
+        process.env.RENDER ||
+        config.nodeEnv === 'production' ||
+        (config.clientStudentUrl && !config.clientStudentUrl.includes('localhost'))
+      ) {
+        studentBase = config.clientStudentUrl && !config.clientStudentUrl.includes('localhost')
+          ? config.clientStudentUrl
+          : 'https://frontend-student-nu.vercel.app';
+      } else {
+        studentBase = config.clientStudentUrl || 'http://localhost:5174';
+      }
+    }
+    // Remove trailing slash if present
+    studentBase = studentBase.replace(/\/+$/, '');
     const examJoinUrl = `${studentBase}/exam/${examCode}`;
 
     try {
